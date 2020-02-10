@@ -1,17 +1,14 @@
 module Api
     module V1
         class PokerSessionsController < ApplicationController
-
             def create
                 user = User.where(:token => params[:token]).first
                 session = user.poker_sessions.new(session_params)
 
-
-
                 if session.save 
-                    render json: {status: 'SUCCESS', message:'Saved session', data: session}, status: :ok
+                    render json: {status: 'SUCCESS', message: 'Saved session', data: session}, status: :ok
                 else 
-                    render json: {status: 'ERROR', message:'Didnt save a session', data: session.errors}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'Didnt save a session', data: session.errors}, status: :unprocessable_entity
                 end
             end 
 
@@ -27,14 +24,14 @@ module Api
 
             def reset_session
                 if !PokerSession.where(:id => params[:id]).exists?
-                    render json: {status: 'ERROR', message:'Session with this id doesn\'t exist', data: nil}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'Session with this id doesn\'t exist', data: nil}, status: :unprocessable_entity
                     return
                 end
 
                 session = PokerSession.find(params[:id])
 
                 if session.user.token != params[:token] 
-                    render json: {status: 'ERROR', message:'This session doesn\'t belong to You!', data: nil}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'This session doesn\'t belong to You!', data: nil}, status: :unprocessable_entity
                     return
                 end
                 session.votes.destroy_all
@@ -42,14 +39,13 @@ module Api
                 session.finished = false
 
                 if session.save 
-                    render json: {status: 'SUCCESS', message:'Reopened a session', data: session}, status: :ok
+                    render json: {status: 'SUCCESS', message: 'Reopened a session', data: session}, status: :ok
                 else 
-                    render json: {status: 'ERROR', message:'Didnt reopen session', data: nil}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'Didnt reopen session', data: nil}, status: :unprocessable_entity
                 end
 
             end
             
-
             private
 
             def session_params 

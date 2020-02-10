@@ -1,11 +1,9 @@
 module Api
     module V1
         class VotesController < ApplicationController
-            def create
-
-                
+            def create                
                 if !PokerSession.where(:id => params[:poker_session_id]).exists?
-                    render json: {status: 'ERROR', message:'Session with this id doesn\'t exist', data: nil}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'Session with this id doesn\'t exist', data: nil}, status: :unprocessable_entity
                     return
                 end
 
@@ -14,16 +12,14 @@ module Api
 
                 session.votes.each do |vote|
                     if vote.user.id == user.id
-                        render json: {status: 'ERROR', message:'You have voted already', data: nil}, status: :unprocessable_entity
+                        render json: {status: 'ERROR', message: 'You have voted already', data: nil}, status: :unprocessable_entity
                         return
                     end
                 end
 
                 if session.finished
-                    render json: {status: 'ERROR', message:'Session has finished', data: nil}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'Session has finished', data: nil}, status: :unprocessable_entity
                 else 
-
-
                     vote = session.votes.new(vote_params)
                     vote.user_id = user.id
                     if vote.save 
@@ -35,9 +31,9 @@ module Api
 
                         session.save
 
-                        render json: {status: 'SUCCESS', message:'Saved vote', data: vote}, status: :ok
+                        render json: {status: 'SUCCESS', message: 'Saved vote', data: vote}, status: :ok
                     else 
-                        render json: {status: 'ERROR', message:'Didn\'t save a vote', data: vote.errors}, status: :unprocessable_entity
+                        render json: {status: 'ERROR', message: 'Didn\'t save a vote', data: nil}, status: :unprocessable_entity
                     end
                 end
             end
