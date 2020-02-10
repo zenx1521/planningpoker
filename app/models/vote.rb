@@ -1,6 +1,6 @@
 class Vote < ApplicationRecord    
-    belongs_to :poker_session
-    belongs_to :user
+  belongs_to :poker_session
+  belongs_to :user
 
-    validates :value, presence: :true   
+  validates :value, presence: :true   
 end
