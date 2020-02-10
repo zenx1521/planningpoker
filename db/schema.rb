@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_10_135723) do
+ActiveRecord::Schema.define(version: 2020_02_10_211451) do
 
   create_table "poker_sessions", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "number_of_voting"
-    t.integer "votes_count", default: 0
     t.boolean "finished", default: false
     t.integer "user_id"
   end

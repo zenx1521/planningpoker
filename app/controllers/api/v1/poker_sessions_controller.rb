@@ -14,20 +14,15 @@ module Api
 
             def return_stats
                 session = PokerSession.find(params[:id])
+
                 if session.finished
                     render json: {status: 'SUCCESS', message: 'Session has finished', data: session.to_json(except: [:updated_at,:created_at], include: {votes: {include: :user}})} , status: :ok
                 else
-                    render json: {status: 'SUCCESS', data: session.to_json(only: [:votes_count,:number_of_voting])} , status: :ok
+                    render json: {status: 'SUCCESS', data: session.to_json(except: [:updated_at,:created_at], include: {votes: {include: :user}})} , status: :ok
                 end
-
             end
 
             def reset_session
-                if !PokerSession.where(:id => params[:id]).exists?
-                    render json: {status: 'ERROR', message: 'Session with this id doesn\'t exist', data: nil}, status: :unprocessable_entity
-                    return
-                end
-
                 session = PokerSession.find(params[:id])
 
                 if session.user.token != params[:token] 
@@ -41,9 +36,8 @@ module Api
                 if session.save 
                     render json: {status: 'SUCCESS', message: 'Reopened a session', data: session}, status: :ok
                 else 
-                    render json: {status: 'ERROR', message: 'Didnt reopen session', data: nil}, status: :unprocessable_entity
+                    render json: {status: 'ERROR', message: 'Didnt reopen session', data: session.errors}, status: :unprocessable_entity
                 end
-
             end
             
             private

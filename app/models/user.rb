@@ -3,6 +3,9 @@ class User < ApplicationRecord
     has_many :votes
     has_many :poker_sessions
 
+    validates :name, presence: :true
+    validates :surname, presence: :true
+
     private 
 
     def set_token

@@ -15,25 +15,25 @@ class VotesCreation
 
             if @session.finished
                 raise 'Session has finished'
-            else 
-                vote = @session.votes.new(vote_params)
-                vote.user_id = @user.id
-                if vote.save
-                    @session.votes_count += 1
-
-                    if @session.votes_count == @session.number_of_voting
-                        @session.finished = true
-                    end
-
-                    if !@session.save!
-                        raise "Session was not updated"
-                    end
-                    
-                    return vote
-                else 
-                    raise "Didn\t save a vote"
-                end
             end
+
+            vote = @session.votes.new(vote_params)
+            vote.user_id = @user.id
+            
+            if vote.save
+                if @session.votes.count == @session.number_of_voting
+                    @session.finished = true
+                end
+
+                if !@session.save
+                    raise "Session was not updated"
+                end
+                
+                return vote
+            else 
+                raise "Didn\t save a vote"
+            end
+
         end
     rescue RuntimeError => error
         error
