@@ -1,6 +1,5 @@
 class User < ApplicationRecord
     before_create :set_token 
-
     has_many :votes
     has_many :poker_sessions
 

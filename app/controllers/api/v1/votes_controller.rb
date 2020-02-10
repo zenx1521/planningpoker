@@ -7,35 +7,20 @@ module Api
                     return
                 end
 
-                session = PokerSession.find(params[:poker_session_id])
+                session = PokerSession.includes(:votes).find(params[:poker_session_id])
                 user = User.where(:token => params[:token]).first
+                vote = VotesCreation.new(session,user,params).execute
 
-                session.votes.each do |vote|
-                    if vote.user.id == user.id
-                        render json: {status: 'ERROR', message: 'You have voted already', data: nil}, status: :unprocessable_entity
-                        return
-                    end
+                if vote.class.to_s == "Vote"
+                    render json: {status: 'SUCCESS', message: 'Saved vote', data: vote}, status: :ok
+                else
+                    puts vote.message
+                    render json: {status: 'ERROR', message: vote, data: nil}, status: :unprocessable_entity
                 end
-
-                if session.finished
-                    render json: {status: 'ERROR', message: 'Session has finished', data: nil}, status: :unprocessable_entity
-                else 
-                    vote = session.votes.new(vote_params)
-                    vote.user_id = user.id
-                    if vote.save 
-                        session.votes_count += 1
-
-                        if session.votes_count == session.number_of_voting
-                            session.finished = true
-                        end
-
-                        session.save
-
-                        render json: {status: 'SUCCESS', message: 'Saved vote', data: vote}, status: :ok
-                    else 
-                        render json: {status: 'ERROR', message: 'Didn\'t save a vote', data: nil}, status: :unprocessable_entity
-                    end
-                end
+                #render json: {status: 'ERROR', message: 'You have voted already', data: nil}, status: :unprocessable_entity
+                #render json: {status: 'ERROR', message: 'Session has finished', data: nil}, status: :unprocessable_entity
+                #render json: {status: 'SUCCESS', message: 'Saved vote', data: vote}, status: :ok
+                #render json: {status: 'ERROR', message: 'Didn\'t save a vote', data: nil}, status: :unprocessable_entity
             end
 
             private 
