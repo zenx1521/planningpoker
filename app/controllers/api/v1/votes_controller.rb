@@ -6,12 +6,10 @@ module Api
         user = User.where(:token => params[:token]).first
         creator = VotesCreation.new(session,user,params)
 
-        vote = creator.call
-
-        if vote
-          render json: {status: 'SUCCESS', message: 'Saved vote', data: vote}, status: :ok
+        if creator.call
+          render json: {status: 'SUCCESS',  data: creator.vote}, status: :ok
         else
-          render json: {status: 'ERROR', message: creator.errors, data: nil}, status: :unprocessable_entity
+          render json: {status: 'ERROR', errors: creator.errors, data: nil}, status: :unprocessable_entity
         end
       end
     end
