@@ -1,20 +1,23 @@
 class VotesCreation
+  attr_reader :errors
+
   def initialize(session,user,params)
     @session = session
     @user = user
     @params = params
+    @errors = []
   end
 
-  def execute
+  def call
     @session.with_lock do
       @session.votes.each do |vote|
         if vote.user.id == @user.id
-          raise "You have voted already"
+          @errors.push("You have voted already")
         end
       end
 
       if @session.finished
-        raise 'Session has finished'
+        @errors.push('Session has finished')
       end
 
       vote = @session.votes.new(vote_params)
@@ -26,17 +29,19 @@ class VotesCreation
         end
 
         if !@session.save
-          raise "Session was not updated"
+          @errors.push("Session was not updated")
         end
         
-        return vote
       else 
-        raise "Didn\t save a vote"
+        @errors.push("Didn\t save a vote")
       end
 
+      unless @errors.empty?
+        raise ActiveRecord::Rollback
+      else 
+        vote
+      end
     end
-  rescue RuntimeError => error
-    error
   end
 
   private
