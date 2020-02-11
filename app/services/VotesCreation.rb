@@ -20,7 +20,7 @@ class VotesCreation
         @errors.push('SESSION_FINISHED')
       end
 
-      @vote = @session.votes.new(vote_params)
+      @vote = @session.votes.new(@params)
       @vote.user_id = @user.id
       
       if vote.save
@@ -44,11 +44,5 @@ class VotesCreation
 
       result
     end
-  end
-
-  private
-
-  def vote_params
-    @params.permit(:value)
   end
 end

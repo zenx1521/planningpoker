@@ -32,8 +32,11 @@ group :development, :test do
   
 end
 
-group :development do
+group :development,:test do
+  gem 'rspec-rails', '~> 3.6'
   gem 'faker'
+  gem 'factory_bot_rails'
+  gem 'database_cleaner'
 end
 
 group :development do

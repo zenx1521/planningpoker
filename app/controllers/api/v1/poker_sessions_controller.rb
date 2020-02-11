@@ -3,6 +3,10 @@ module Api
     class PokerSessionsController < ApplicationController
       def create
         user = User.where(:token => params[:token]).first
+        if !user
+          render json: {status: 'ERROR', error: 'USER_NOT_FOUND'}, status: :unprocessable_entity
+          return
+        end
         session = user.poker_sessions.new(session_params)
 
         if session.save 
@@ -16,12 +20,6 @@ module Api
         session = PokerSession.find(params[:id])
 
         render json: {status: 'SUCCESS', data: session.to_json(except: [:updated_at,:created_at], include: {votes: {include: :user}})} , status: :ok
-
-        #if session.finished
-        #  render json: {status: 'SUCCESS', data: session.to_json(except: [:updated_at,:created_at], include: {votes: {include: :user}})} , status: :ok
-        #else
-        #  render json: {status: 'SUCCESS', data: session.to_json(except: [:updated_at,:created_at], include: {votes: {include: :user}})} , status: :ok
-        #end
       end
 
       def reset_session
@@ -32,7 +30,6 @@ module Api
           return
         end
         session.votes.destroy_all
-        session.votes_count = 0
         session.finished = false
 
         if session.save 
