@@ -12,14 +12,12 @@ class VotesCreation
   def call
     result = false
     @session.with_lock do
-      @session.votes.each do |vote|
-        if vote.user.id == @user.id
-          @errors.push("ALREADY VOTED")
-        end
+      if @session.votes.any? {|v| v.user_id == @user.id}
+        @errors.push("ALREADY_VOTED")
       end
 
       if @session.finished
-        @errors.push('SESSION FINISHED')
+        @errors.push('SESSION_FINISHED')
       end
 
       @vote = @session.votes.new(vote_params)
@@ -31,11 +29,11 @@ class VotesCreation
         end
 
         if !@session.save
-          @errors.push("SESSION NOT UPDATED")
+          @errors.push("SESSION_NOT_UPDATED")
         end
         
       else 
-        @errors.push("SESSION NOT SAVED")
+        @errors.push("VOTE_NOT_SAVED")
       end
 
       if @errors.empty?

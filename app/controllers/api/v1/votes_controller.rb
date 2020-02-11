@@ -9,7 +9,7 @@ module Api
         if creator.call
           render json: {status: 'SUCCESS',  data: creator.vote}, status: :ok
         else
-          render json: {status: 'ERROR', errors: creator.errors, data: nil}, status: :unprocessable_entity
+          render json: {status: 'ERROR', errors: creator.errors}, status: :unprocessable_entity
         end
       end
     end
