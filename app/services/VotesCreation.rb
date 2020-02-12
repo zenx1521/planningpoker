@@ -24,7 +24,7 @@ class VotesCreation
       @vote.user_id = @user.id
       
       if vote.save
-        if @session.votes.count == @session.number_of_voting
+        if @session.votes.count >= @session.number_of_voting
           @session.finished = true
         end
 
